@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#08090c">
+<title>DARK BYTE MIC 121 SYSTEM</title>
+<style>
+:root {
+  --bg: #08090c;
+  --panel: #111319;
+  --panel2: #171a22;
+  --line: rgba(255,255,255,.17);
+  --white: #f7f8ff;
+  --muted: #9da3b2;
+  --glow: rgba(255,255,255,.24);
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html { width:100%; height:100%; background:#08090c; }
+body {
+  width:100%; min-height:100vh; min-height:100dvh; padding:0; color:var(--white);
+  isolation:isolate;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.11), transparent 34%),
+    radial-gradient(ellipse at 50% 55%, rgba(110,120,150,.07), transparent 48%),
+    var(--bg);
+  font-family: Inter, "Segoe UI", Roboto, system-ui, sans-serif;
+  display:flex; flex-direction:column; align-items:stretch;
+}
+body::before {
+  content:""; position:fixed; inset:-30%; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(circle at 18% 24%,rgba(255,255,255,.075),transparent 18%),
+    radial-gradient(circle at 80% 68%,rgba(185,195,220,.07),transparent 20%),
+    radial-gradient(circle at 60% 10%,rgba(255,255,255,.045),transparent 24%);
+  animation:ambientDrift 18s ease-in-out infinite alternate;
+}
+body::after {
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  opacity:.12;
+  background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+  background-size:34px 34px;
+  mask-image:linear-gradient(to bottom,black,transparent 80%);
+}
+.app-shell {
+  width:100%; max-width:none; flex:1; min-height:100vh; min-height:100dvh;
+  position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+  animation:shellEnter .85s cubic-bezier(.2,.8,.2,1) both;
+  padding:calc(22px + env(safe-area-inset-top, 0px)) calc(17px + env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) calc(17px + env(safe-area-inset-left, 0px));
+  border-radius:0;
+  background:linear-gradient(155deg, rgba(25,27,35,.98), rgba(10,11,15,.99) 70%);
+  border:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.app-shell:before {
+  content:""; position:absolute; width:240px; height:240px; top:-150px; left:calc(50% - 120px);
+  border-radius:50%; background:rgba(255,255,255,.17); filter:blur(65px); pointer-events:none;
+  animation:haloPulse 7s ease-in-out infinite;
+}
+.app-shell:after {
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(115deg,transparent 0%,rgba(255,255,255,.035) 42%,transparent 53%);
+  transform:translateX(-130%); animation:panelSweep 9s ease-in-out 1.2s infinite;
+}
+.content { position:relative; z-index:1; display:flex; flex-direction:column; gap:19px; flex:1; }
+.header { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:17px; border-bottom:1px solid var(--line); }
+.brand { display:flex; align-items:center; gap:10px; min-width:0; }
+.brand-mark {
+  width:43px; height:43px; flex:0 0 43px; display:grid; place-items:center; border-radius:14px;
+  border:1px solid rgba(255,255,255,.5); background:linear-gradient(145deg,#fff,#9ea5b8 48%,#303440);
+  color:#111319; font-size:20px; font-weight:950; box-shadow:0 0 20px rgba(255,255,255,.16);
+  animation:markGlow 4s ease-in-out infinite;
+}
+.brand-name { font-size:clamp(18px,5vw,23px); font-weight:900; letter-spacing:.5px; white-space:nowrap; }
+.brand-name small { display:block; margin-top:3px; color:#b6bbc9; font-size:11px; letter-spacing:3px; font-weight:700; }
+.status { display:flex; align-items:center; gap:7px; font-size:10px; color:#dce0eb; letter-spacing:1px; white-space:nowrap; }
+.status-dot { width:7px; height:7px; border-radius:50%; background:#fff; box-shadow:0 0 10px #fff; animation:statusBlink 2.4s ease-in-out infinite; }
+.button-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:1fr; gap:13px; flex:1; }
+.web-btn {
+  position:relative; overflow:hidden; isolation:isolate;
+  min-height:152px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:9px;
+  padding:17px 9px; text-decoration:none; color:var(--white); border-radius:21px;
+  background:linear-gradient(145deg,rgba(34,37,47,.98),rgba(17,19,26,.98));
+  border:1px solid rgba(255,255,255,.19);
+  box-shadow:0 7px 0 rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.09), 0 0 20px rgba(255,255,255,.025);
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;
+  animation:cardEnter .7s cubic-bezier(.2,.8,.2,1) both;
+}
+.web-btn:nth-child(1) { animation-delay:.10s; }
+.web-btn:nth-child(2) { animation-delay:.18s; }
+.web-btn:nth-child(3) { animation-delay:.26s; }
+.web-btn:nth-child(4) { animation-delay:.34s; }
+.web-btn::before {
+  content:""; position:absolute; inset:-1px; z-index:-1; pointer-events:none;
+  background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.13) 48%,transparent 72%);
+  transform:translateX(-130%); transition:transform .65s ease;
+}
+.web-btn:hover::before, .web-btn:focus-visible::before { transform:translateX(130%); }
+.web-btn:hover, .web-btn:focus-visible {
+  transform:translateY(-3px); border-color:rgba(255,255,255,.52);
+  box-shadow:0 10px 0 rgba(0,0,0,.35),0 0 25px rgba(255,255,255,.09),inset 0 1px 0 rgba(255,255,255,.13);
+  outline:none;
+}
+.web-btn:active { transform:translateY(3px) scale(.99); border-color:rgba(255,255,255,.55); box-shadow:0 2px 0 #050609,0 0 20px rgba(255,255,255,.10); }
+.logo-box {
+  width:62px; height:62px; display:grid; place-items:center; border-radius:19px;
+  transition:transform .28s ease,box-shadow .28s ease;
+  border:1px solid rgba(255,255,255,.42); background:linear-gradient(145deg,#252934,#101116);
+  box-shadow:0 0 18px rgba(255,255,255,.10),inset 0 1px 0 rgba(255,255,255,.1);
+}
+.logo-box svg { width:36px; height:36px; display:block; transition:transform .3s ease; }
+.web-btn:hover .logo-box, .web-btn:focus-visible .logo-box {
+  transform:translateY(-3px) rotate(-3deg);
+  box-shadow:0 0 25px rgba(255,255,255,.18),inset 0 1px 0 rgba(255,255,255,.15);
+}
+.web-btn:hover .logo-box svg, .web-btn:focus-visible .logo-box svg { transform:scale(1.08); }
+.label { font-size:16px; font-weight:750; letter-spacing:.1px; }
+.url-text { color:#a0a6b6; font-size:10px; }
+.site-arrow { color:#fff; font-size:18px; line-height:1; opacity:.75; }
+.extension-panel {
+  position:relative; overflow:hidden;
+  border:1px solid rgba(255,255,255,.2); border-radius:21px; padding:14px;
+  background:linear-gradient(145deg,rgba(28,30,38,.95),rgba(13,14,19,.96));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 24px rgba(255,255,255,.035);
+}
+.extension-panel::after {
+  content:""; position:absolute; top:0; left:-45%; width:35%; height:1px;
+  background:linear-gradient(90deg,transparent,#fff,transparent);
+  box-shadow:0 0 12px rgba(255,255,255,.75); animation:edgeScan 6s linear infinite;
+  pointer-events:none;
+}
+.section-head { display:flex; align-items:center; gap:9px; margin:0 2px 13px; color:#f5f6fb; font-size:13px; font-weight:800; letter-spacing:1.5px; }
+.section-head svg { width:19px; height:19px; }
+.file-button {
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:57px; padding:13px;
+  border:1px solid rgba(255,255,255,.58); border-radius:15px;
+  background:linear-gradient(105deg,#f4f5fa,#c5c9d5 52%,#fdfdff);
+  color:#101116; font-size:13px; font-weight:900; letter-spacing:.45px;
+  box-shadow:0 0 20px rgba(255,255,255,.12),inset 0 1px 0 #fff; cursor:pointer;
+  transition:transform .18s ease,box-shadow .25s ease;
+}
+.file-button::after {
+  content:""; position:absolute; top:-60%; left:-35%; width:22%; height:220%;
+  background:rgba(255,255,255,.6); filter:blur(9px); transform:rotate(22deg);
+  animation:buttonShine 5.5s ease-in-out infinite; pointer-events:none;
+}
+.file-button:active { transform:scale(.985); box-shadow:0 0 28px rgba(255,255,255,.22),inset 0 1px 0 #fff; }
+.file-button svg { width:22px; height:22px; }
+#extensionFile { display:none; }
+.file-status { margin-top:10px; text-align:center; color:#aeb4c2; font-size:11px; overflow-wrap:anywhere; }
+.footer { text-align:center; padding:12px 3px 1px; }
+.footer-line { width:70px; height:2px; margin:0 auto 15px; border-radius:3px; background:linear-gradient(90deg,transparent,#fff,transparent); box-shadow:0 0 12px rgba(255,255,255,.6); animation:lineGlow 3s ease-in-out infinite; }
+.footer-title { font-size:clamp(17px,4.8vw,22px); font-weight:950; letter-spacing:1.3px; line-height:1.35; text-shadow:0 0 18px rgba(255,255,255,.22); animation:titleGlow 4.5s ease-in-out infinite; }
+.footer-sub { margin:9px auto 0; max-width:320px; color:#c2c6d2; font-size:10px; line-height:1.8; letter-spacing:1.05px; font-weight:650; }
+.footer-sub strong { display:block; margin-top:3px; color:#fff; font-size:11px; letter-spacing:.75px; }
+@media(max-width:360px) {
+  .app-shell { padding-left:12px; padding-right:12px; }
+  .web-btn { min-height:137px; }
+  .status { font-size:9px; letter-spacing:.4px; }
+}
+@keyframes shellEnter { from { opacity:0; transform:translateY(18px) scale(.985); } to { opacity:1; transform:translateY(0) scale(1); } }
+@keyframes cardEnter { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
+@keyframes ambientDrift { from { transform:translate3d(-1%,0,0) scale(1); } to { transform:translate3d(1.5%,2%,0) scale(1.05); } }
+@keyframes haloPulse { 0%,100% { opacity:.55; transform:scale(.92); } 50% { opacity:1; transform:scale(1.12); } }
+@keyframes panelSweep { 0%,65%,100% { transform:translateX(-130%); } 82% { transform:translateX(130%); } }
+@keyframes markGlow { 0%,100% { box-shadow:0 0 14px rgba(255,255,255,.12); } 50% { box-shadow:0 0 26px rgba(255,255,255,.28); } }
+@keyframes statusBlink { 0%,100% { opacity:.55; box-shadow:0 0 5px #fff; } 50% { opacity:1; box-shadow:0 0 13px #fff; } }
+@keyframes edgeScan { 0% { left:-45%; opacity:0; } 15% { opacity:1; } 75% { opacity:1; } 100% { left:110%; opacity:0; } }
+@keyframes buttonShine { 0%,15% { left:-35%; opacity:0; } 30% { opacity:.65; } 55%,100% { left:125%; opacity:0; } }
+@keyframes lineGlow { 0%,100% { opacity:.55; filter:brightness(.8); } 50% { opacity:1; filter:brightness(1.5); } }
+@keyframes titleGlow { 0%,100% { text-shadow:0 0 10px rgba(255,255,255,.12); } 50% { text-shadow:0 0 22px rgba(255,255,255,.34); } }
+@media(prefers-reduced-motion:reduce) {
+  *, *::before, *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
+}
+</style>
+</head>
+<body>
+<main class="app-shell">
+  <div class="content">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-mark">D<span style="font-size:12px">B</span></div>
+        <div class="brand-name">DARK BYTE<small>MIC 121</small></div>
+      </div>
+      <div class="status"><span class="status-dot"></span> SYSTEM READY</div>
+    </header>
+
+    <nav class="button-grid" aria-label="Web apps">
+      <a href="https://web.whatsapp.com" class="web-btn" data-site="whatsapp">
+        <span class="logo-box">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M24 3a20 20 0 0 0-17 30L4 44l11-3A20 20 0 1 0 24 3Z"/><path fill="#17191f" d="M24 7a16 16 0 0 0-13.6 24.5l.5.8-1.5 5.2 5.4-1.4.8.5A16 16 0 1 0 24 7Z"/><path fill="#fff" d="M18 14c-.7 0-1.5.2-2 1-.7.8-2.5 2.4-2.5 5.8s2.6 6.7 3 7.2c.4.5 5 7.8 12.2 10.2 6 2 7.2 1.1 8.5 1 1.3-.2 4.2-1.7 4.8-3.3.6-1.6.6-3 .4-3.3-.2-.3-.7-.5-1.5-.9l-4.8-2.3c-.7-.3-1.2-.5-1.7.4-.5.8-2 2.4-2.4 2.9-.4.5-.9.6-1.6.2-.8-.4-3.3-1.2-6.2-3.8-2.3-2-3.8-4.5-4.2-5.3-.4-.8 0-1.2.3-1.6l1.2-1.4c.4-.5.5-.8.8-1.3.2-.5.1-1-.1-1.4-.2-.4-1.8-4.4-2.5-6-.6-1.5-1.3-1.3-1.7-1.3Z" transform="translate(-2 -2) scale(.95)"/></svg>
+        </span><span class="label">WhatsApp</span><span class="url-text">web.whatsapp.com</span>
+      </a>
+      <a href="https://www.instagram.com" class="web-btn" data-site="instagram">
+        <span class="logo-box"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="5" width="38" height="38" rx="12" fill="none" stroke="#fff" stroke-width="4"/><circle cx="24" cy="24" r="9" fill="none" stroke="#fff" stroke-width="4"/><circle cx="35" cy="13" r="2.5" fill="#fff"/></svg></span>
+        <span class="label">Instagram</span><span class="url-text">instagram.com</span>
+      </a>
+      <a href="https://web.telegram.org" class="web-btn" data-site="telegram">
+        <span class="logo-box"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M43 7 36 40c-.5 2.4-2 3-4 1.8l-10-7.4-4.8 4.6c-.5.5-1 .9-2 .9l.8-10.2L34.5 14c.8-.7-.2-1.1-1.2-.4L12 27.1 2.5 24c-2-.6-2-2 .4-2.9L39.5 6.7C41.2 6 43.5 7 43 7Z"/></svg></span>
+        <span class="label">Telegram</span><span class="url-text">web.telegram.org</span>
+      </a>
+      <a href="https://www.messenger.com" class="web-btn" data-site="messenger">
+        <span class="logo-box"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M24 4C12.5 4 4 12.4 4 23c0 5.7 2.6 10.8 7 14.2V44l6.5-3.6c2 .6 4.2.9 6.5.9 11.5 0 20-8.4 20-19S35.5 4 24 4Z"/><path fill="#181a20" d="m10 29 11-12 7 7 10-7-11 12-7-7-10 7Z"/></svg></span>
+        <span class="label">Messenger</span><span class="url-text">messenger.com</span>
+      </a>
+    </nav>
+
+    <section class="extension-panel">
+      <div class="section-head">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1" stroke="white" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="12" r="5" stroke="white" stroke-width="1.8"/></svg>
+        MIC FILE ADD
+      </div>
+      <input type="file" id="extensionFile" accept=".crx,.zip,.js,.json,.xpi">
+      <button class="file-button" id="chooseFile" type="button">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        ADD EXTENSION FILE
+      </button>
+      <p class="file-status" id="fileStatus" aria-live="polite">Select a file from your device</p>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-line"></div>
+      <h2 class="footer-title">DARK BYTE MIC 121 SYSTEM</h2>
+      <p class="footer-sub">MY MIC IS 2026 BEST
+        <strong>ALL ANDROID MIC SYSTEM • ANY APP</strong>
+      </p>
+    </footer>
+  </div>
+</main>
+<script>
+const fileInput = document.getElementById('extensionFile');
+const chooseFile = document.getElementById('chooseFile');
+const fileStatus = document.getElementById('fileStatus');
+
+chooseFile.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => {
+  const file = fileInput.files && fileInput.files[0];
+  if (!file) {
+    fileStatus.textContent = 'No file selected';
+    return;
+  }
+  fileStatus.textContent = 'Selected: ' + file.name;
+});
+
+/* Browser navigation: open the selected service in the SAME window (full-screen, proper mobile size). */
+document.querySelectorAll('.web-btn').forEach(link => {
+  link.addEventListener('click', event => {
+    event.preventDefault();
+    window.location.href = link.href;
+  });
+});
+</script>
+</body>
+</html>
